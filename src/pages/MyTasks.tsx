@@ -38,9 +38,16 @@ export default function MyTasks() {
     (filterProjectId === 'ALL' || t.projectId === filterProjectId)
   )
 
-  function handleUpdate(updated: TaskResponse) {
-    setTasks(prev => prev.map(t => t.id === updated.id ? updated : t))
-    setDetailTask(updated)
+  async function handleUpdate(updated: TaskResponse) {
+    try {
+      // Only status updates are allowed from MyTasks (user is assignee)
+      await taskService.updateStatus(updated.id, updated.status)
+      setTasks(prev => prev.map(t => t.id === updated.id ? updated : t))
+      setDetailTask(updated)
+    } catch (err: any) {
+      // If it fails, revert
+      console.error(err)
+    }
   }
 
   return (
@@ -95,7 +102,12 @@ export default function MyTasks() {
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8a8fa3' }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>📋</div>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>Không có task nào</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1a1d29', marginBottom: 8 }}>Không có task nào</div>
+              <div style={{ fontSize: 13.5, color: '#8a8fa3', lineHeight: 1.6 }}>
+                {filterStatus !== 'ALL' || filterPriority !== 'ALL' || filterProjectId !== 'ALL'
+                  ? 'Không có task khớp với bộ lọc hiện tại.'
+                  : 'Bạn chưa được gán task nào. Liên hệ Manager/Admin của dự án để được gán task.'}
+              </div>
             </div>
           ) : (
             <div style={{ background: '#fff', border: '1px solid #edeef3', borderRadius: 18, overflow: 'hidden', boxShadow: '0 1px 3px rgba(20,23,40,.04)' }}>

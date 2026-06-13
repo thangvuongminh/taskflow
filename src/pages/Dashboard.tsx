@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Bell } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import Avatar from '../components/Avatar'
 import ProgressBar from '../components/ProgressBar'
@@ -48,11 +47,34 @@ export default function Dashboard() {
 
   const today = new Date().toLocaleDateString('vi', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
 
+  const doneTasks = [...todayTasks, ...upcomingTasks].filter(t => t.status === 'DONE').length
+  const inProgressTasks = todayTasks.filter(t => t.status === 'IN_PROGRESS').length
+
   const kpiCards = [
-    { value: String(data ? 0 : 0), label: 'Hoàn thành tuần này', delta: '+0 hôm nay', deltaColor: '#16a34a', deltaBg: '#e7f6ec', iconBg: '#e7f6ec', icon: '✅' },
-    { value: String(todayTasks.filter(t => t.status === 'IN_PROGRESS').length), label: 'Đang thực hiện', delta: 'Active', deltaColor: '#2563eb', deltaBg: '#e4ecfd', iconBg: '#e4ecfd', icon: '⚡' },
-    { value: String(todayTasks.length), label: 'Task hôm nay', delta: 'Hôm nay', deltaColor: '#dc2626', deltaBg: '#fde8e8', iconBg: '#fde8e8', icon: '⏰' },
-    { value: String(sprintProgress.length), label: 'Sprint đang chạy', delta: 'Active', deltaColor: '#d97706', deltaBg: '#fdf0d9', iconBg: '#fdf0d9', icon: '📊' },
+    {
+      value: String(doneTasks),
+      label: 'Task đã hoàn thành',
+      delta: 'DONE',
+      deltaColor: '#16a34a', deltaBg: '#e7f6ec', iconBg: '#e7f6ec', icon: '✅'
+    },
+    {
+      value: String(inProgressTasks),
+      label: 'Đang thực hiện',
+      delta: 'Active',
+      deltaColor: '#2563eb', deltaBg: '#e4ecfd', iconBg: '#e4ecfd', icon: '⚡'
+    },
+    {
+      value: String(todayTasks.length),
+      label: 'Task hôm nay',
+      delta: 'Hôm nay',
+      deltaColor: '#dc2626', deltaBg: '#fde8e8', iconBg: '#fde8e8', icon: '⏰'
+    },
+    {
+      value: String(sprintProgress.length),
+      label: 'Sprint đang chạy',
+      delta: sprintProgress.length > 0 ? 'Active' : 'Trống',
+      deltaColor: '#d97706', deltaBg: '#fdf0d9', iconBg: '#fdf0d9', icon: '📊'
+    },
   ]
 
   if (loading) return (
@@ -76,13 +98,6 @@ export default function Dashboard() {
             </div>
           </div>
           <div style={{ flex: 1 }} />
-          <div style={{ display: 'flex', alignItems: 'center', background: '#f4f5f8', border: '1px solid #e8eaf0', borderRadius: 10, padding: '0 12px', gap: 8, width: 230 }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#9499ad" strokeWidth="2"/><path d="M20 20l-3-3" stroke="#9499ad" strokeWidth="2" strokeLinecap="round"/></svg>
-            <input placeholder="Tìm task..." style={{ border: 'none', background: 'transparent', outline: 'none', padding: '9px 0', fontFamily: 'inherit', fontSize: 13.5, color: '#1a1d29', width: '100%' }} />
-          </div>
-          <div style={{ position: 'relative', width: 42, height: 42, borderRadius: 11, background: '#f4f5f8', border: '1px solid #e8eaf0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-            <Bell size={19} color="#5b5f78" />
-          </div>
         </header>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '26px 34px 36px' }}>
@@ -108,7 +123,11 @@ export default function Dashboard() {
                 <span style={{ fontSize: 12, fontWeight: 700, color: '#2563eb', background: '#e4ecfd', borderRadius: 999, padding: '2px 10px' }}>{todayTasks.length} việc</span>
               </div>
               {todayTasks.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '30px 0', color: '#8a8fa3', fontSize: 13.5, fontWeight: 600 }}>Không có task nào hôm nay 🎉</div>
+                <div style={{ textAlign: 'center', padding: '30px 0' }}>
+                  <div style={{ fontSize: 28, marginBottom: 8 }}>🎉</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#16a34a' }}>Không có task nào đến hạn hôm nay!</div>
+                  <div style={{ fontSize: 12.5, color: '#8a8fa3', marginTop: 4 }}>Bạn đang tự do — kiểm tra My Tasks để xem tổng thể.</div>
+                </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   {todayTasks.map(t => <TodayTaskCard key={t.id} task={t} />)}
