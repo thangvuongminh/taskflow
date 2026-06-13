@@ -248,7 +248,16 @@ export default function Board() {
     setColumns(prev => prev.map(col => col.id === newTask.status ? { ...col, tasks: [...col.tasks, newTask] } : col))
   }
 
-  function handleUpdateTask(updated: TaskResponse) {
+  async function handleUpdateTask(updated: TaskResponse) {
+    const original = columns.flatMap(c => c.tasks).find(t => t.id === updated.id)
+    if (original?.status !== updated.status) {
+      try {
+        await taskService.updateStatus(updated.id, updated.status)
+      } catch (err: any) {
+        alert(err.response?.data?.message ?? 'Cập nhật trạng thái thất bại')
+        return
+      }
+    }
     setColumns(prev => prev.map(col => {
       const without = col.tasks.filter(t => t.id !== updated.id)
       return col.id === updated.status ? { ...col, tasks: [...without, updated] } : { ...col, tasks: without }
