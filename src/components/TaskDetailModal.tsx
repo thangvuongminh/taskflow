@@ -103,12 +103,14 @@ export default function TaskDetailModal({ task, canEdit, onClose, onUpdate, onDe
               </div>
             </div>
 
-            {task.description && (
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#8a8fa3', letterSpacing: '.4px', marginBottom: 8 }}>MÔ TẢ</div>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#8a8fa3', letterSpacing: '.4px', marginBottom: 8 }}>MÔ TẢ</div>
+              {!task.description ? (
+                <div style={{ fontSize: 13.5, color: '#c4c8d4', fontStyle: 'italic', padding: '10px 14px', background: '#f8f9fc', borderRadius: 10 }}>Chưa có mô tả</div>
+              ) : (
                 <p style={{ margin: 0, fontSize: 14, color: '#4b4f63', lineHeight: 1.6, background: '#f8f9fc', borderRadius: 10, padding: '12px 14px' }}>{task.description}</p>
-              </div>
-            )}
+              )}
+            </div>
 
             <div>
               <div style={{ fontSize: 12, fontWeight: 700, color: '#8a8fa3', letterSpacing: '.4px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -163,7 +165,7 @@ export default function TaskDetailModal({ task, canEdit, onClose, onUpdate, onDe
                   <span style={{ fontSize: 13, fontWeight: 700, color: '#13152b' }}>{task.assignee.username}</span>
                 </div>
               ) : (
-                <span style={{ fontSize: 13, color: '#a0a4b8', fontWeight: 600 }}>Chưa gán</span>
+                <span style={{ fontSize: 13, color: '#c4c8d4', fontWeight: 600, fontStyle: 'italic' }}>Chưa được gán</span>
               )}
             </div>
 
@@ -175,12 +177,17 @@ export default function TaskDetailModal({ task, canEdit, onClose, onUpdate, onDe
                   const active = priority === p
                   return (
                     <button key={p} onClick={() => handlePriorityChange(p)}
-                      style={{ padding: '6px 10px', borderRadius: 8, border: `1.5px solid ${active ? c.color + '55' : '#e8eaf0'}`, background: active ? c.bg : '#fafafa', fontSize: 11.5, fontWeight: 700, color: active ? c.color : '#a0a4b8', cursor: canEdit ? 'pointer' : 'default', textAlign: 'left' }}>
+                      style={{ padding: '6px 10px', borderRadius: 8, border: `1.5px solid ${active ? c.color + '55' : '#e8eaf0'}`, background: active ? c.bg : '#fafafa', fontSize: 11.5, fontWeight: 700, color: active ? c.color : '#a0a4b8', cursor: canEdit ? 'pointer' : 'default', textAlign: 'left', opacity: canEdit ? 1 : 0.4, pointerEvents: canEdit ? 'auto' : 'none' }}>
                       {p}
                     </button>
                   )
                 })}
               </div>
+              {!canEdit && (
+                <div style={{ fontSize: 11.5, color: '#8a8fa3', fontWeight: 600, padding: '8px 10px', background: '#f8f9fc', borderRadius: 8, marginTop: 4, lineHeight: 1.5 }}>
+                  Chỉ Manager/Admin mới có thể chỉnh sửa task này.
+                </div>
+              )}
             </div>
 
             <div style={{ marginBottom: 18 }}>
@@ -192,7 +199,7 @@ export default function TaskDetailModal({ task, canEdit, onClose, onUpdate, onDe
             <div style={{ marginBottom: 18 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#8a8fa3', letterSpacing: '.4px', marginBottom: 6 }}>DEADLINE</div>
               <span style={{ fontSize: 13.5, fontWeight: 700, color: '#13152b' }}>
-                {task.dueDate ? new Date(task.dueDate).toLocaleDateString('vi', { day: '2-digit', month: '2-digit' }) : 'Không có'}
+                {task.dueDate ? new Date(task.dueDate).toLocaleDateString('vi', { day: '2-digit', month: '2-digit' }) : '—'}
               </span>
             </div>
 

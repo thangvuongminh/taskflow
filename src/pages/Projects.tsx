@@ -168,11 +168,11 @@ export default function Projects() {
 
                       <div style={{ display: 'flex', gap: 6 }}>
                         {[
-                          { Icon: LayoutGrid, route: 'board' },
-                          { Icon: Users, route: 'members' },
-                          { Icon: TrendingDown, route: 'burndown' },
-                        ].map(({ Icon, route }) => (
-                          <button key={route} title={route}
+                          { Icon: LayoutGrid, route: 'board',     title: 'Kanban Board' },
+                          { Icon: Users,      route: 'members',   title: 'Thành viên' },
+                          { Icon: TrendingDown, route: 'burndown', title: 'Burndown Chart' },
+                        ].map(({ Icon, route, title }) => (
+                          <button key={route} title={title}
                             onClick={e => { e.stopPropagation(); setActiveProject(p); navigate('/' + route) }}
                             style={{ width: 30, height: 30, borderRadius: 8, background: '#f4f5f8', border: '1px solid #e8eaf0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                             <Icon size={14} color="#8a8fa3" />

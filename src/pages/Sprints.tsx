@@ -175,8 +175,17 @@ export default function Sprints() {
             <div style={{ color: '#8a8fa3', fontSize: 14, fontWeight: 600 }}>Đang tải sprints...</div>
           ) : sprints.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: '#8a8fa3' }}>
-              <div style={{ fontSize: 36, marginBottom: 12 }}>🏃</div>
-              <div style={{ fontSize: 16, fontWeight: 700 }}>Chưa có sprint nào</div>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🏃</div>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#1a1d29', marginBottom: 8 }}>Chưa có sprint nào</div>
+              <div style={{ fontSize: 13.5, color: '#8a8fa3', lineHeight: 1.6, marginBottom: canManage ? 20 : 0 }}>
+                Sprint giúp nhóm tổ chức task theo từng chu kỳ làm việc.
+              </div>
+              {canManage && (
+                <button onClick={() => setShowModal(true)}
+                  style={{ padding: '11px 24px', borderRadius: 10, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: '#fff', fontSize: 14, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,99,235,.35)' }}>
+                  + Tạo Sprint đầu tiên
+                </button>
+              )}
             </div>
           ) : sprints.map(sprint => {
             const cfg = statusConfig[sprint.status]

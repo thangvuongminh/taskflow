@@ -122,10 +122,12 @@ export default function Members() {
 
   async function handleChangeRole(userId: number, newRole: ProjectRole) {
     if (!projectId) return
+    const member = members.find(m => m.userId === userId)
+    if (!window.confirm(`Đổi role của "${member?.username}" thành ${newRole}?`)) return
     try {
       const updated = await projectService.updateMemberRole(projectId, userId, newRole)
       setMembers(prev => prev.map(m => m.userId === userId ? updated : m))
-      showToast(`Đã đổi role thành ${newRole}`)
+      showToast(`Đã đổi role của ${member?.username} thành ${newRole}`)
     } catch (err: any) {
       showToast(err.response?.data?.message ?? 'Đổi role thất bại')
     }
@@ -133,6 +135,8 @@ export default function Members() {
 
   async function handleRemove(userId: number) {
     if (!projectId || userId === currentUser?.id) return
+    const member = members.find(m => m.userId === userId)
+    if (!window.confirm(`Xóa "${member?.username}" khỏi dự án?`)) return
     try {
       await projectService.removeMember(projectId, userId)
       setMembers(prev => prev.filter(m => m.userId !== userId))
