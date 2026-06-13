@@ -1,28 +1,26 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { LayoutDashboard, LayoutGrid, TrendingDown, CheckSquare, Users, FolderKanban, ChevronRight, LogOut } from 'lucide-react'
 import Avatar from './Avatar'
-import { getCurrentUser } from '../data/members'
 import { useAuth } from '../context/AuthContext'
-const currentUser = getCurrentUser()
 import { useProject } from '../context/ProjectContext'
 
-import { myTasks } from '../data/tasks'
-import { currentUser as cu } from '../data/members'
-
-const myTaskCount = myTasks.filter(t => t.assigneeId === cu.id && t.status !== 'DONE').length
+const COLORS = ['#6366f1','#ec4899','#10b981','#f59e0b','#3b82f6','#ef4444','#8b5cf6','#06b6d4']
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard',  icon: LayoutDashboard },
   { path: '/projects',  label: 'Dự án',      icon: FolderKanban },
   { path: '/board',     label: 'Board',       icon: LayoutGrid },
   { path: '/burndown',  label: 'Burndown',    icon: TrendingDown },
-  { path: '/my-tasks',  label: 'My Tasks',    icon: CheckSquare, badge: myTaskCount > 0 ? String(myTaskCount) : undefined },
+  { path: '/my-tasks',  label: 'My Tasks',    icon: CheckSquare },
   { path: '/members',   label: 'Members',     icon: Users },
 ]
 
 function ActiveProject() {
-  const { activeProject } = useProject()
+  const { activeProject, projects } = useProject()
   const navigate = useNavigate()
+  if (!activeProject) return null
+  const index = projects.findIndex(p => p.id === activeProject.id)
+  const dotColor = COLORS[(index >= 0 ? index : 0) % COLORS.length]
   return (
     <div
       onClick={() => navigate('/projects')}
@@ -30,7 +28,7 @@ function ActiveProject() {
     >
       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.6px', color: '#5a5f7d', marginBottom: 6 }}>DỰ ÁN HIỆN TẠI</div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ width: 8, height: 8, borderRadius: '50%', background: activeProject.dotColor, flexShrink: 0, display: 'block' }} />
+        <span style={{ width: 8, height: 8, borderRadius: '50%', background: dotColor, flexShrink: 0, display: 'block' }} />
         <span style={{ fontSize: 13, fontWeight: 700, color: '#fff', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activeProject.name}</span>
         <ChevronRight size={13} color="#5a5f7d" />
       </div>
@@ -43,6 +41,8 @@ export default function Sidebar() {
   const { pathname } = useLocation()
   const { logout, user } = useAuth()
   function handleLogout() { logout(); navigate('/login') }
+
+  const initials = user ? user.username.slice(0, 2).toUpperCase() : '??'
 
   return (
     <aside style={{
@@ -90,14 +90,6 @@ export default function Sidebar() {
             >
               <Icon size={17} color={active ? '#7eaaff' : '#6a6f8d'} />
               <span style={{ flex: 1 }}>{item.label}</span>
-              {item.badge && (
-                <span style={{
-                  fontSize: 11, fontWeight: 700, background: '#3b82f6',
-                  color: '#fff', borderRadius: 999, padding: '2px 8px',
-                }}>
-                  {item.badge}
-                </span>
-              )}
             </div>
           )
         })}
@@ -111,10 +103,10 @@ export default function Sidebar() {
         marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 11,
         padding: 12, borderRadius: 12, background: '#1c1f3a', cursor: 'pointer',
       }}>
-        <Avatar initials={currentUser.initials} gradient={currentUser.avatarGradient} size={36} />
+        <Avatar initials={initials} gradient="linear-gradient(135deg,#3b82f6,#2563eb)" size={36} />
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700, color: '#fff' }}>{currentUser.name}</div>
-          <div style={{ fontSize: 12, color: '#6a6f8d' }}>{currentUser.role}</div>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: '#fff' }}>{user?.username ?? ''}</div>
+          <div style={{ fontSize: 12, color: '#6a6f8d' }}>{user?.email ?? ''}</div>
         </div>
       </div>
 
