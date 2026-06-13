@@ -178,7 +178,7 @@ export default function Projects() {
   }
 
   function handleUpdate(updated: ProjectResponse) {
-    setProjects(prev => prev.map(p => p.id === updated.id ? updated : p))
+    setProjects(projects.map(p => p.id === updated.id ? updated : p))
     setActiveProject(updated)
   }
 
@@ -186,7 +186,7 @@ export default function Projects() {
     if (!window.confirm(`Xóa dự án "${p.name}"?\nToàn bộ sprint, task và thành viên sẽ bị xóa. Hành động này không thể hoàn tác.`)) return
     try {
       await projectService.deleteProject(p.id)
-      setProjects(prev => prev.filter(proj => proj.id !== p.id))
+      setProjects(projects.filter(proj => proj.id !== p.id))
     } catch (err: any) {
       alert(err.response?.data?.message ?? 'Xóa dự án thất bại')
     }
