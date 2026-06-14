@@ -276,7 +276,7 @@ export default function Sprints() {
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                      <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, letterSpacing: '-.3px' }}>{sprint.name}</h3>
+                      <h3 style={{ margin: 0, fontSize: 17, fontWeight: 800, letterSpacing: '-.3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 400 }}>{sprint.name}</h3>
                       <span style={{ fontSize: 12, fontWeight: 700, color: cfg.color, background: cfg.bg, padding: '3px 10px', borderRadius: 6 }}>{cfg.label}</span>
                     </div>
                     {sprint.goal && <p style={{ margin: '0 0 12px', fontSize: 13.5, color: '#6b7089', fontWeight: 500 }}>{sprint.goal}</p>}

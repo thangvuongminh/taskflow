@@ -137,7 +137,6 @@ function CreateTaskModal({ projectId, activeSprint, members, defaultStatus, onCl
               style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid #e8eaf0', fontSize: 14, fontFamily: 'inherit', background: '#fff', cursor: 'pointer', outline: 'none' }}>
               <option value="TODO">TO DO</option>
               <option value="IN_PROGRESS">IN PROGRESS</option>
-              <option value="DONE">DONE</option>
             </select>
           </div>
           <div>
@@ -159,7 +158,9 @@ function CreateTaskModal({ projectId, activeSprint, members, defaultStatus, onCl
             <select value={assigneeId} onChange={e => setAssigneeId(e.target.value)}
               style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid #e8eaf0', fontSize: 14, fontFamily: 'inherit', background: '#fff', cursor: 'pointer', outline: 'none' }}>
               <option value="">Chưa gán</option>
-              {members.map(m => <option key={m.userId} value={String(m.userId)}>{m.username}</option>)}
+              {members.filter(m => m.role !== 'ADMIN').map(m => (
+                <option key={m.userId} value={String(m.userId)}>{m.username}</option>
+              ))}
             </select>
           </div>
           <div>
