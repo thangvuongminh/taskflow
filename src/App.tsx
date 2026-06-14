@@ -41,6 +41,6 @@ export default function App() {
           <AppRoutes />
         </ProjectProvider>
       </AuthProvider>
-    </HashRouter>
+    </BrowserRouter>
   )
 }
