@@ -4,7 +4,7 @@ import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core'
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, ChevronDown, X } from 'lucide-react'
+import { Plus, ChevronDown, X, GripVertical } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import Avatar from '../components/Avatar'
 import PriorityBadge from '../components/PriorityBadge'
@@ -23,16 +23,26 @@ interface Column { id: TaskStatus; label: string; dotColor: string; tasks: TaskR
 const colDotColors: Record<TaskStatus, string> = { TODO: '#94a3b8', IN_PROGRESS: '#6366f1', DONE: '#22c55e' }
 const TODAY = new Date().toISOString().split('T')[0]
 
-function TaskCard({ task, isDragging = false, onOpen }: { task: TaskResponse; isDragging?: boolean; onOpen?: () => void }) {
+function TaskCard({ task, isDragging = false, listeners }: {
+  task: TaskResponse; isDragging?: boolean; listeners?: ReturnType<typeof useSortable>['listeners']
+}) {
   const isOverdue = task.dueDate && task.dueDate < TODAY && task.status !== 'DONE'
   return (
-    <div style={{ background: '#fff', borderRadius: 13, padding: '14px 15px', boxShadow: isDragging ? '0 8px 24px rgba(20,23,40,.14)' : '0 1px 3px rgba(20,23,40,.04)', border: '1px solid #edeef3', cursor: isDragging ? 'grabbing' : 'grab' }}>
+    <div style={{ background: '#fff', borderRadius: 13, padding: '14px 15px', boxShadow: isDragging ? '0 8px 24px rgba(20,23,40,.14)' : '0 1px 3px rgba(20,23,40,.04)', border: '1px solid #edeef3', cursor: isDragging ? 'grabbing' : 'pointer' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 9 }}>
         <PriorityBadge priority={task.priority as Priority} />
         {task.sprintName && <span style={{ fontSize: 10.5, fontWeight: 700, color: '#6b7089', background: '#f1f2f7', padding: '3px 8px', borderRadius: 6 }}>{task.sprintName}</span>}
+        {listeners && (
+          <div
+            {...listeners}
+            onClick={e => e.stopPropagation()}
+            style={{ marginLeft: 'auto', cursor: 'grab', color: '#c4c8d4', padding: '2px 4px', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+          >
+            <GripVertical size={14} />
+          </div>
+        )}
       </div>
-      <div onClick={e => { e.stopPropagation(); onOpen?.() }}
-        style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.4, marginBottom: 10, color: '#13152b', cursor: 'pointer' }}>
+      <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.4, marginBottom: 10, color: '#13152b', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
         {task.title}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -52,8 +62,13 @@ function TaskCard({ task, isDragging = false, onOpen }: { task: TaskResponse; is
 function SortableTaskCard({ task, onOpen }: { task: TaskResponse; onOpen: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(task.id) })
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.3 : 1 }} {...attributes} {...listeners}>
-      <TaskCard task={task} onOpen={onOpen} />
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.3 : 1 }}
+      {...attributes}
+      onClick={onOpen}
+    >
+      <TaskCard task={task} listeners={listeners} />
     </div>
   )
 }
