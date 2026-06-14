@@ -79,7 +79,7 @@ export default function MyTasks() {
       setTasks(prev => prev.map(t => t.id === updated.id ? updated : t))
       setDetailTask(updated)
     } catch (err: any) {
-      console.error(err)
+      alert(err.response?.data?.message ?? 'Cập nhật thất bại')
     }
   }
 
